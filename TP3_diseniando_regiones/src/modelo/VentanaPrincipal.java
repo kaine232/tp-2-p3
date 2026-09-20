@@ -24,6 +24,7 @@ public class VentanaPrincipal {
 	private JFrame frame;
 	private JTextField textField;
 	private JTextField textField_1;
+	private JTextField textField_2;
 
 	/**
 	 * Launch the application.
@@ -113,5 +114,15 @@ public class VentanaPrincipal {
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_2.setBounds(150, 411, 200, 14);
 		frame.getContentPane().add(lblNewLabel_2);
+		
+		textField_2 = new JTextField();
+		textField_2.setBounds(207, 270, 86, 20);
+		frame.getContentPane().add(textField_2);
+		textField_2.setColumns(10);
+		
+		JLabel lblNewLabel_3 = new JLabel("REGIONES");
+		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 10));
+		lblNewLabel_3.setBounds(224, 252, 52, 14);
+		frame.getContentPane().add(lblNewLabel_3);
 	}
 }
