@@ -14,11 +14,11 @@ public class Grafo {
         provinciasYSusAristas.putIfAbsent(provincia, new ArrayList<>());
     }
 
-    public void agregarArista(Provincia a, Provincia b) {
+    public void agregarArista(Provincia a, Provincia b) { //default
         agregarArista(a, b, 0);
     }
     
-    public void agregarArista(Provincia a, Provincia b, int peso) {
+    public void agregarArista(Provincia a, Provincia b, int peso) { //dado un peso
         agregarProvincia(a);
         agregarProvincia(b);
         if(existeAristaEntreProvincias(a,b)) {
@@ -39,7 +39,11 @@ public class Grafo {
     	return false;
     }
     
-    public List<Arista> obtenerAristasDe(Provincia p) {
+    public List<Provincia> getProvincias() {
+        return new ArrayList<>(provinciasYSusAristas.keySet());
+    }
+    
+    public List<Arista> getAristasDe(Provincia p) {
         List<Arista> vecinas = provinciasYSusAristas.get(p);
         if (vecinas == null) {
             throw new IllegalArgumentException("La provincia no existe en el grafo: " + p);
