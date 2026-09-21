@@ -39,4 +39,22 @@ public class Grafo {
     	return false;
     }
     
+    public List<Arista> obtenerAristasDe(Provincia p) {
+        List<Arista> vecinas = provinciasYSusAristas.get(p);
+        if (vecinas == null) {
+            throw new IllegalArgumentException("La provincia no existe en el grafo: " + p);
+        }
+        return new ArrayList<>(vecinas);
+    }
+    
+    public int cantidadProvincias() {
+        return provinciasYSusAristas.size();
+    }
+    
+    public boolean esConexo() {
+        if (provinciasYSusAristas.size() <= 1) { //por definicion
+            return true;
+        }
+        return false; //<-- aqui va BFS
+    }
 }

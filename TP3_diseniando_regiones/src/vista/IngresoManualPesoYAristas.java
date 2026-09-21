@@ -1,4 +1,4 @@
-package modelo;
+package vista;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
