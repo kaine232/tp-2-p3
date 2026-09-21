@@ -55,6 +55,16 @@ public class Grafo {
         return new ArrayList<>(vecinas);
     }
     
+    /*public void eliminarArista (Provincia a, Provincia b) {
+    	if(existeAristaEntreProvincias(a,b)) {
+    		for(Arista arista : provinciasYSusAristas.get(a)) {
+    			if(arista.getExtremoOpuesto(a).equals(b)) {
+    				
+    			}
+    		}
+    	}
+    }*/
+    
     public int cantidadProvincias() {
         return provinciasYSusAristas.size();
     }

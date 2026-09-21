@@ -21,7 +21,6 @@ public class ProvinciasArgentinas {
 			{"Córdoba","Santiago del Estero"},
 			{"Córdoba","Catamarca"},
 			{"Córdoba","La Rioja"},
-			{"Córdoba","Catamarca"},
 			{"Córdoba","San Luis"},
 			{"Córdoba","Santa Fe"},
 			{"Córdoba","Buenos Aires"},
