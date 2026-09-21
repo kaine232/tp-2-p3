@@ -30,8 +30,12 @@ public class Grafo {
         provinciasYSusAristas.get(b).add(arista);
     }
     
-    private boolean existeAristaEntreProvincias(Provincia a, Provincia b) {
-    	for (Arista arista : provinciasYSusAristas.get(a)) {
+    public boolean existeAristaEntreProvincias(Provincia a, Provincia b) {
+    	List<Arista> aristasDeA = provinciasYSusAristas.get(a);
+    	if (aristasDeA == null) {
+    		return false;
+    	}
+    	for (Arista arista : aristasDeA) {
     		if(arista.getExtremoOpuesto(a).equals(b)) {
     			return true;
     		}
@@ -55,10 +59,4 @@ public class Grafo {
         return provinciasYSusAristas.size();
     }
     
-    public boolean esConexo() {
-        if (provinciasYSusAristas.size() <= 1) { //por definicion
-            return true;
-        }
-        return false; //<-- aqui va BFS
-    }
 }
