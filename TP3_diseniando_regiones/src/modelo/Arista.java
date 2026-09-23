@@ -35,4 +35,23 @@ public class Arista {
         if (prov.equals(this.provinciaDestino)) return this.provinciaOrigen;
         throw new IllegalArgumentException("Esta arista no se relaciona con la provincia");
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Arista)) return false;
+		Arista that = (Arista) o;
+
+		boolean mismoSentido = provinciaOrigen.equals(that.provinciaOrigen)
+				&& provinciaDestino.equals(that.provinciaDestino);
+		boolean sentidoInvertido = provinciaOrigen.equals(that.provinciaDestino)
+				&& provinciaDestino.equals(that.provinciaOrigen);
+
+		return mismoSentido || sentidoInvertido;
+	}
+
+	@Override
+	public int hashCode() {
+		return provinciaOrigen.hashCode() + provinciaDestino.hashCode();
+	}
 }

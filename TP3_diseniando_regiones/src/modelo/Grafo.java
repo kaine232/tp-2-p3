@@ -2,49 +2,49 @@ package modelo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Grafo {
 
 	private final Map<Provincia, List <Arista>> provinciasYSusAristas = new HashMap<>();
-	private final List<Arista> aristas = new ArrayList<>();
+	private final Set<Arista> aristas = new HashSet<>();
 
     public void agregarProvincia(Provincia provincia) {
         provinciasYSusAristas.putIfAbsent(provincia, new ArrayList<>());
     }
 
-    public void agregarArista(Provincia a, Provincia b) { //default
-        agregarArista(a, b, 0);
+    public boolean agregarArista(Provincia a, Provincia b) { //default
+        return agregarArista(a, b, 0);
     }
     
-    public void agregarArista(Provincia a, Provincia b, int peso) { //dado un peso
+    public boolean agregarArista(Provincia a, Provincia b, int peso) { //dado un peso
         agregarProvincia(a);
         agregarProvincia(b);
-        if(existeAristaEntreProvincias(a,b)) {
-        	throw new IllegalArgumentException("Ya existe una arista entre estas provincias");
-        }
+
         Arista arista = new Arista(a, b, peso);
-        aristas.add(arista);
-        provinciasYSusAristas.get(a).add(arista);
-        provinciasYSusAristas.get(b).add(arista);
+        boolean esNueva = aristas.add(arista); // false si ya existía (en cualquier direccion)
+
+        if (esNueva) {
+            provinciasYSusAristas.get(a).add(arista);
+            provinciasYSusAristas.get(b).add(arista);
+        }
+
+        return esNueva;
     }
     
     public boolean existeAristaEntreProvincias(Provincia a, Provincia b) {
-    	List<Arista> aristasDeA = provinciasYSusAristas.get(a);
-    	if (aristasDeA == null) {
-    		return false;
-    	}
-    	for (Arista arista : aristasDeA) {
-    		if(arista.getExtremoOpuesto(a).equals(b)) {
-    			return true;
-    		}
-    	}
-    	return false;
+    	return aristas.contains(new Arista(a, b, 0));
     }
     
     public List<Provincia> getProvincias() {
         return new ArrayList<>(provinciasYSusAristas.keySet());
+    }
+    
+    public List<Arista> getAristas() {
+        return new ArrayList<>(aristas);
     }
     
     public List<Arista> getAristasDe(Provincia p) {
@@ -55,15 +55,6 @@ public class Grafo {
         return new ArrayList<>(vecinas);
     }
     
-    /*public void eliminarArista (Provincia a, Provincia b) {
-    	if(existeAristaEntreProvincias(a,b)) {
-    		for(Arista arista : provinciasYSusAristas.get(a)) {
-    			if(arista.getExtremoOpuesto(a).equals(b)) {
-    				
-    			}
-    		}
-    	}
-    }*/
     
     public int cantidadProvincias() {
         return provinciasYSusAristas.size();
