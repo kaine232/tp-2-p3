@@ -19,10 +19,10 @@ public class CalculadorAGM {
             arbol.agregarProvincia(provincia);
         }
 
-        List<Arista> aristasOrdenadasPorPeso = new ArrayList<>(grafoOriginal.getAristas());
-        aristasOrdenadasPorPeso.sort(Comparator.comparingInt(Arista::getPeso));
+        List<Arista> aristasOrdenadasAscendente = new ArrayList<>(grafoOriginal.getAristas());
+        aristasOrdenadasAscendente.sort(Comparator.comparingInt(Arista::getPeso));
 
-        for (Arista arista : aristasOrdenadasPorPeso) {
+        for (Arista arista : aristasOrdenadasAscendente) {
         	Provincia origen = arista.getProvinciaOrigen();
             Provincia destino = arista.getProvinciaDestino();
 
