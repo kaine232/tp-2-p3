@@ -7,28 +7,34 @@ import java.util.List;
 import java.util.Set;
 
 public class DivisorDeRegiones {
-
-	private Grafo arbolGM;
 	
-	public static Grafo grafoSinAristasMasPesadas(Grafo arbolOriginal, int cantidadRegiones) {
-		Grafo arbolDivididoEnRegiones = new Grafo();
-		for(Provincia provincia : arbolOriginal.getProvincias()) {
-			arbolDivididoEnRegiones.agregarProvincia(provincia);
+	public static List<Set<Provincia>> obtenerRegiones(Grafo arbolOriginal, int cantidadRegiones) {
+		int cantidadProvincias = arbolOriginal.cantidadProvincias();
+		if(cantidadRegiones<1 ||cantidadRegiones>cantidadProvincias) {
+			throw new IllegalArgumentException("La cantidad de regiones debe estar entre 1 y la cantidad de provincias en total");
 		}
 		
-		List<Arista> aristasPorPesoDescendiente = new ArrayList<>(arbolOriginal.getAristas());
-		aristasPorPesoDescendiente.sort(Comparator.comparingInt(Arista::getPeso).reversed());
+		Grafo grafoRecortado = grafoEditadoSinAristasMasPesadas(arbolOriginal, cantidadRegiones);
 		
-		return grafoEditado(cantidadRegiones, arbolDivididoEnRegiones, aristasPorPesoDescendiente);
+		return agruparRegiones(grafoRecortado);
 	}
 
-	private static Grafo grafoEditado(int cantidadABorrar, Grafo arbol, List<Arista> aristasOrdenadas) {
-		int indiceABorrar = cantidadABorrar-1;
-		for(int i = indiceABorrar; i<aristasOrdenadas.size(); i++) {
-			Arista arista = aristasOrdenadas.get(i);
-			arbol.agregarArista(arista.getProvinciaOrigen(), arista.getProvinciaDestino(), arista.getPeso());
+	private static Grafo grafoEditadoSinAristasMasPesadas(Grafo arbol, int cantidadRegiones) {
+		Grafo grafoRecortado = new Grafo();
+		List<Arista> aristasOrdenadas = new ArrayList<>(arbol.getAristas());
+		int cantidadARecortar = cantidadRegiones-1;
+		
+		aristasOrdenadas.sort(Comparator.comparingInt(Arista::getPeso).reversed());
+		
+		for(Provincia provincia : arbol.getProvincias()) {
+			grafoRecortado.agregarProvincia(provincia);
 		}
-		return arbol;
+		
+		for(int i = cantidadARecortar; i<aristasOrdenadas.size(); i++) {
+			Arista arista = aristasOrdenadas.get(i);
+			grafoRecortado.agregarArista(arista.getProvinciaOrigen(), arista.getProvinciaDestino(), arista.getPeso());
+		}
+		return grafoRecortado;
 	}
 	
 	private static List<Set<Provincia>> agruparRegiones(Grafo grafoEditado) { 

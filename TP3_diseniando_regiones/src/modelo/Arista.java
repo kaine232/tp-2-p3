@@ -30,6 +30,10 @@ public class Arista {
 		return this.peso;
 	}
 	
+	public void setPeso(int peso) {
+		this.peso=peso;
+	}
+	
 	public Provincia getExtremoOpuesto(Provincia prov) {
 		if (prov.equals(this.provinciaOrigen)) return this.provinciaDestino;
         if (prov.equals(this.provinciaDestino)) return this.provinciaOrigen;
