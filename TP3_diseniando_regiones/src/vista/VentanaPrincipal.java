@@ -6,10 +6,13 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.Set;
 import java.awt.event.ActionEvent;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import javax.swing.SwingConstants;
+import modelo.*;
 import javax.swing.BoxLayout;
 import java.awt.FlowLayout;
 import javax.swing.JTextPane;
@@ -19,12 +22,13 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 import java.awt.Color;
 
-public class VentanaPrincipal {
+public class VentanaPrincipal implements VistaRegiones{
 
 	private JFrame frame;
 	private JTextField textField;
 	private JTextField textField_1;
 	private JTextField textField_2;
+	private PresenterRegiones presenter;
 
 	/**
 	 * Launch the application.
@@ -124,5 +128,26 @@ public class VentanaPrincipal {
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 10));
 		lblNewLabel_3.setBounds(224, 252, 52, 14);
 		frame.getContentPane().add(lblNewLabel_3);
+		
+		Grafo grafo = ConstructorDeGrafos.construir(ProvinciasArgentinas.obtenerVecindadesArgentina());
+		this.presenter = new PresenterRegiones(this, grafo);
+	}
+
+	@Override
+	public void mostrarAristasParaCargarPesos(List<Arista> aristas) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mostrarRegiones(List<Set<Provincia>> regiones) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mostrarError(String mensaje) {
+		// TODO Auto-generated method stub
+		
 	}
 }

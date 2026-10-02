@@ -90,5 +90,9 @@ public class ProvinciasArgentinas {
 			{"Tucumán","Santiago del Estero"}
 		
 	};
+	
+	public static String[][] obtenerVecindadesArgentina(){
+		return provinciasYVecinos;
+	}
 
 }
