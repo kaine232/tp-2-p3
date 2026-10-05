@@ -21,14 +21,22 @@ import java.awt.Font;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class VentanaPrincipal implements VistaRegiones{
 
 	private JFrame frame;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
+	private JTextField cantidadDeProvinciasManual;
 	private PresenterRegiones presenter;
+	private int manualNumeroProvincias;
+	private JButton botonManual;
+	private JButton botonArchivo;
+	private JButton botonGenerar;
+	private JTextField cantidadDeProvinciasArchivo;
+	private JTextField cantidadDeRegionesDeseadas;
 
 	/**
 	 * Launch the application.
@@ -61,52 +69,78 @@ public class VentanaPrincipal implements VistaRegiones{
 		frame.setBounds(100, 100, 516, 489);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JButton btnNewButton = new JButton("MANUAL");
-		btnNewButton.setFont(new Font("Verdana", Font.PLAIN, 16));
-		btnNewButton.setBounds(75, 50, 150, 100);
-		btnNewButton.addActionListener(new ActionListener() {
+		botonManual = new JButton("MANUAL");
+		botonManual.setEnabled(false);
+		botonManual.setFont(new Font("Verdana", Font.PLAIN, 16));
+		botonManual.setBounds(75, 50, 150, 100);
+		botonManual.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				botonManual.setEnabled(false);
+				cantidadDeProvinciasManual.setEnabled(false);
+				botonArchivo.setEnabled(false);
+				IngresoManualNombres ventanaIngresoNombres = new IngresoManualNombres();
+				ventanaIngresoNombres.setupVentana(manualNumeroProvincias);
+				ventanaIngresoNombres.actContador();
+				ventanaIngresoNombres.setVisible(true);
+				ventanaIngresoNombres.addWindowListener(new WindowAdapter() {
+					@Override
+					public void windowClosed(WindowEvent e) {
+						botonManual.setEnabled(true);
+						cantidadDeProvinciasManual.setEnabled(true);
+						botonArchivo.setEnabled(true);
+					}
+				});
 			}
 		});
 		frame.getContentPane().setLayout(null);
-		frame.getContentPane().add(btnNewButton);
+		frame.getContentPane().add(botonManual);
 		
-		JButton btnNewButton_1 = new JButton("ARCHIVO");
-		btnNewButton_1.setFont(new Font("Verdana", Font.PLAIN, 16));
-		btnNewButton_1.addActionListener(new ActionListener() {
+		botonArchivo = new JButton("ARCHIVO");
+		botonArchivo.setFont(new Font("Verdana", Font.PLAIN, 16));
+		botonArchivo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		btnNewButton_1.setBounds(275, 50, 150, 100);
-		frame.getContentPane().add(btnNewButton_1);
+		botonArchivo.setBounds(275, 50, 150, 100);
+		frame.getContentPane().add(botonArchivo);
 		
 		JLabel lblNewLabel = new JLabel("INGRESO DE DATOS");
 		lblNewLabel.setFont(new Font("Times New Roman", Font.BOLD, 16));
 		lblNewLabel.setBounds(171, 15, 157, 23);
 		frame.getContentPane().add(lblNewLabel);
 		
-		JButton btnNewButton_2 = new JButton("GENERAR");
-		btnNewButton_2.setEnabled(false);
-		btnNewButton_2.setFont(new Font("Trebuchet MS", Font.BOLD, 20));
-		btnNewButton_2.setBounds(150, 300, 200, 100);
-		frame.getContentPane().add(btnNewButton_2);
+		botonGenerar = new JButton("GENERAR");
+		botonGenerar.setEnabled(false);
+		botonGenerar.setFont(new Font("Trebuchet MS", Font.BOLD, 20));
+		botonGenerar.setBounds(150, 300, 200, 100);
+		frame.getContentPane().add(botonGenerar);
 		
-		textField = new JTextField();
-		textField.setBounds(112, 161, 76, 20);
-		frame.getContentPane().add(textField);
-		textField.setColumns(10);
+		cantidadDeProvinciasManual = new JTextField();
+		cantidadDeProvinciasManual.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				try {
+					manualNumeroProvincias = Integer.parseInt(cantidadDeProvinciasManual.getText().trim());
+					botonManual.setEnabled(manualNumeroProvincias > 0);
+				} catch (NumberFormatException ex) {
+					botonManual.setEnabled(false);
+				}
+			}
+		});
+		cantidadDeProvinciasManual.setBounds(112, 161, 76, 20);
+		frame.getContentPane().add(cantidadDeProvinciasManual);
+		cantidadDeProvinciasManual.setColumns(10);
 		
 		JLabel lblNewLabel_1 = new JLabel("Cantidad Provincias");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 10));
 		lblNewLabel_1.setBounds(99, 185, 99, 14);
 		frame.getContentPane().add(lblNewLabel_1);
 		
-		textField_1 = new JTextField();
-		textField_1.setEditable(false);
-		textField_1.setColumns(10);
-		textField_1.setBounds(312, 161, 76, 20);
-		frame.getContentPane().add(textField_1);
+		cantidadDeProvinciasArchivo = new JTextField();
+		cantidadDeProvinciasArchivo.setEditable(false);
+		cantidadDeProvinciasArchivo.setColumns(10);
+		cantidadDeProvinciasArchivo.setBounds(312, 161, 76, 20);
+		frame.getContentPane().add(cantidadDeProvinciasArchivo);
 		
 		JLabel lblNewLabel_1_1 = new JLabel("Cantidad Provincias");
 		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.BOLD, 10));
@@ -119,10 +153,10 @@ public class VentanaPrincipal implements VistaRegiones{
 		lblNewLabel_2.setBounds(150, 411, 200, 14);
 		frame.getContentPane().add(lblNewLabel_2);
 		
-		textField_2 = new JTextField();
-		textField_2.setBounds(207, 270, 86, 20);
-		frame.getContentPane().add(textField_2);
-		textField_2.setColumns(10);
+		cantidadDeRegionesDeseadas = new JTextField();
+		cantidadDeRegionesDeseadas.setBounds(207, 270, 86, 20);
+		frame.getContentPane().add(cantidadDeRegionesDeseadas);
+		cantidadDeRegionesDeseadas.setColumns(10);
 		
 		JLabel lblNewLabel_3 = new JLabel("REGIONES");
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 10));
@@ -133,6 +167,10 @@ public class VentanaPrincipal implements VistaRegiones{
 		this.presenter = new PresenterRegiones(this, grafo);
 	}
 
+	private void iniciarVentanaIngresoDeNombres() {
+		
+	}
+	
 	@Override
 	public void mostrarAristasParaCargarPesos(List<Arista> aristas) {
 		// TODO Auto-generated method stub
