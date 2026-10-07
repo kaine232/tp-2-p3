@@ -1,25 +1,24 @@
-package modelo;
+package controlador;
 
 import java.util.List;
 import java.util.Set;
 
-public class PresenterRegiones {
+import modelo.Arista;
+import modelo.CalculadorAGM;
+import modelo.DivisorDeRegiones;
+import modelo.Grafo;
+import modelo.Provincia;
+
+public class ControladorRegiones {
 
     private final VistaRegiones vista;
     private final Grafo grafo;
 
-    public PresenterRegiones(VistaRegiones vista, Grafo grafo) {
+    public ControladorRegiones(VistaRegiones vista, Grafo grafo) {
         this.vista = vista;
         this.grafo = grafo;
 
-        vista.mostrarAristasParaCargarPesos(grafo.getAristas());
     }
-
-
-    public void actualizarPesoLuegoDeEditar(Arista arista, int nuevoPeso) {
-        arista.setPeso(nuevoPeso);
-    }
-
 
     public void ejecutarAlgoritmo(int cantidadRegiones) {
         try {

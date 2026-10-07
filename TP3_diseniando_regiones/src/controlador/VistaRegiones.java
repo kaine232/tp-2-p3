@@ -1,11 +1,11 @@
-package modelo;
+package controlador;
 
 import java.util.List;
 import java.util.Set;
 
-public interface VistaRegiones {
+import modelo.Provincia;
 
-	void mostrarAristasParaCargarPesos(List<Arista> aristas);
+public interface VistaRegiones {
 	
 	void mostrarRegiones(List<Set<Provincia>> regiones);
 	

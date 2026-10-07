@@ -7,29 +7,36 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import modelo.Grafo;
+
 import javax.swing.SwingConstants;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JTextField;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class IngresoManualNombres extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
-	private JTextField textField;
+	private JTextField campoDeIngresoNombres;
 	private int totalProvincias;
-	private ArrayList<String> nombresProvincias = new ArrayList<String>();
+	private ArrayList<String> nombresProvincias = new ArrayList<>();
 	private int posicionActual;
-	private JButton cancelButton;
-	private JButton okButton;
+	private JButton botonAtras;
+	private JButton botonSiguiente;
 	private JLabel lblNewLabel_1;
 	private JLabel lblNewLabel;
 	private JLabel lblNewLabel_2;
+	private Grafo grafoSolicitado;
 
 	/**
 	 * Launch the application.
@@ -48,8 +55,10 @@ public class IngresoManualNombres extends JDialog {
 	 * Create the dialog.
 	 */
 	public IngresoManualNombres() {
+		setModal(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 220);
+		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -62,11 +71,18 @@ public class IngresoManualNombres extends JDialog {
 			contentPanel.add(lblNewLabel);
 		}
 		{
-			textField = new JTextField();
-			textField.setBounds(97, 59, 240, 30);
-			textField.setHorizontalAlignment(SwingConstants.CENTER);
-			contentPanel.add(textField);
-			textField.setColumns(10);
+			campoDeIngresoNombres = new JTextField();
+			campoDeIngresoNombres.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyReleased(KeyEvent e) {
+					nombresProvincias.set(posicionActual, campoDeIngresoNombres.getText().trim());
+					actPosibleFinalizar();
+				}
+			});
+			campoDeIngresoNombres.setBounds(97, 59, 240, 30);
+			campoDeIngresoNombres.setHorizontalAlignment(SwingConstants.CENTER);
+			contentPanel.add(campoDeIngresoNombres);
+			campoDeIngresoNombres.setColumns(10);
 		}
 		
 		
@@ -82,7 +98,7 @@ public class IngresoManualNombres extends JDialog {
 			lblNewLabel_2.setVisible(false);
 			lblNewLabel_2.setForeground(new Color(255, 0, 0));
 			lblNewLabel_2.setFont(new Font("Trebuchet MS", Font.PLAIN, 10));
-			lblNewLabel_2.setBounds(219, 134, 88, 14);
+			lblNewLabel_2.setBounds(219, 134, 180, 14);
 			contentPanel.add(lblNewLabel_2);
 		}
 		{
@@ -91,45 +107,52 @@ public class IngresoManualNombres extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 5));
 			{
-				cancelButton = new JButton("CANCELAR");
-				cancelButton.addActionListener(new ActionListener() {
+				botonAtras = new JButton("CANCELAR");
+				botonAtras.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if (posicionActual == 0) {
 							dispose();
 						} else {
 							posicionActual--;
+							actPosibleFinalizar();
 							actNombreBotones();
 							actContador();
-							okButton.setEnabled(true);
+							botonSiguiente.setEnabled(true);
 							lblNewLabel_2.setVisible(false);
+							campoDeIngresoNombres.setText(nombresProvincias.get(posicionActual));
 						}
 					}
 				});
-				cancelButton.setHorizontalAlignment(SwingConstants.LEFT);
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
+				botonAtras.setHorizontalAlignment(SwingConstants.LEFT);
+				botonAtras.setActionCommand("Cancel");
+				buttonPane.add(botonAtras);
 			}
 			{
-				okButton = new JButton("SIGUIENTE");
-				okButton.addActionListener(new ActionListener() {
+				botonSiguiente = new JButton("SIGUIENTE");
+				botonSiguiente.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if (posicionActual == totalProvincias - 1 && todosLosDatosCompletados()) {
+							IngresoManualPesoYAristas ventanaIngresoPesoAristas = new IngresoManualPesoYAristas();
+							ventanaIngresoPesoAristas.setupVentana(nombresProvincias, totalProvincias);
+							ventanaIngresoPesoAristas.setVisible(true);
+							
+							if (ventanaIngresoPesoAristas.finalizoConExito()) {
+								grafoSolicitado = ventanaIngresoPesoAristas.obtenerGrafo();
+							}
 							dispose();
 						}
 						if (posicionActual != totalProvincias - 1) {
 								posicionActual++;
-								if(posicionActual == totalProvincias - 1 && !todosLosDatosCompletados()) {
-									okButton.setEnabled(false);
-									lblNewLabel_2.setVisible(true);
-								}
+								actPosibleFinalizar();
 								actNombreBotones();
 								actContador();
+								campoDeIngresoNombres.setText(nombresProvincias.get(posicionActual));
 						}
 					}
 				});
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
+				botonSiguiente.setActionCommand("OK");
+				buttonPane.add(botonSiguiente);
+				getRootPane().setDefaultButton(botonSiguiente);
 			}
 		}
 	}
@@ -137,6 +160,7 @@ public class IngresoManualNombres extends JDialog {
 	public void setupVentana(int pro) {
 		datoCantidadDeProvincias(pro);
 		iniciarArregloNombres();
+		actContador();
 	}
 	
 	private void datoCantidadDeProvincias(int pro) {
@@ -144,11 +168,22 @@ public class IngresoManualNombres extends JDialog {
 	}
 
 	private boolean todosLosDatosCompletados() {
-		boolean estaTodo = true;
 		for (String nombre : nombresProvincias) {
-			estaTodo = estaTodo && nombre != "";
+			if (nombre.trim().isEmpty()) {
+				return false;
+			}
 		}
-		return estaTodo;
+		return true;
+	}
+	
+	private boolean hayNombresRepetidos() {
+	    HashSet<String> vistos = new HashSet<>();
+	    for (String nombre : nombresProvincias) {
+	        if (!vistos.add(nombre.toLowerCase())) {
+	            return true;   // add devuelve false si ya estaba
+	        }
+	    }
+	    return false;
 	}
 	
 	private void iniciarArregloNombres() {
@@ -157,21 +192,43 @@ public class IngresoManualNombres extends JDialog {
 		}
 	}
 	
+	private void actPosibleFinalizar() {
+	    boolean datosLlenos = todosLosDatosCompletados();
+	    boolean repetidos = hayNombresRepetidos();
+	    boolean esLaUltimaPos = (posicionActual == totalProvincias - 1);
+
+	    botonSiguiente.setEnabled(!esLaUltimaPos || (datosLlenos && !repetidos));
+
+	    if (esLaUltimaPos && !datosLlenos) {
+	        lblNewLabel_2.setText("¡FALTAN NOMBRES!");
+	        lblNewLabel_2.setVisible(true);
+	    } else if (esLaUltimaPos && repetidos) {
+	        lblNewLabel_2.setText("¡HAY NOMBRES REPETIDOS!");
+	        lblNewLabel_2.setVisible(true);
+	    } else {
+	        lblNewLabel_2.setVisible(false);
+	    }
+	}
+	
 	private void actNombreBotones() {
 		if (posicionActual == 0) {
-			cancelButton.setText("CANCELAR");
+			botonAtras.setText("CANCELAR");
 		} else {
-			cancelButton.setText("ATRÁS");
+			botonAtras.setText("ATRÁS");
 		}
 		
 		if (posicionActual == totalProvincias - 1) {
-			okButton.setText("FINALIZAR");
+			botonSiguiente.setText("FINALIZAR");
 		} else {
-			okButton.setText("SIGUIENTE");
+			botonSiguiente.setText("SIGUIENTE");
 		}
 	}
 	
-	public void actContador() {
+	private void actContador() {
 		lblNewLabel_1.setText((posicionActual + 1) + " / " + totalProvincias);
+	}
+	
+	public Grafo getGrafo() {
+	    return grafoSolicitado;
 	}
 }
