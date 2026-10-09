@@ -6,36 +6,28 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Set;
 import java.awt.event.ActionEvent;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 import javax.swing.SwingConstants;
 
 import controlador.ControladorRegiones;
+import controlador.ControladorVecinos;
 import controlador.VistaRegiones;
 import modelo.*;
 
-import javax.swing.BoxLayout;
-import java.awt.FlowLayout;
-import javax.swing.JTextPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
 import java.awt.Font;
-import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 public class VentanaPrincipal implements VistaRegiones{
@@ -97,9 +89,9 @@ public class VentanaPrincipal implements VistaRegiones{
 				ventanaIngresoNombres.setupVentana(manualNumeroProvincias);
 				ventanaIngresoNombres.setVisible(true);
 				
-				Grafo grafo = ventanaIngresoNombres.getGrafo();
-				if (grafo != null) {
-					controladorRegiones = new ControladorRegiones(VentanaPrincipal.this, grafo);
+				ControladorVecinos controladorVecinos = ventanaIngresoNombres.obtenerControlador();
+				if (controladorVecinos != null) {
+					controladorRegiones = new ControladorRegiones(VentanaPrincipal.this, controladorVecinos);
 					botonGenerar.setEnabled(true);
 					avisoFaltanDatos.setVisible(false);
 					cantidadDeProvinciasArchivo.setText("");
@@ -122,11 +114,10 @@ public class VentanaPrincipal implements VistaRegiones{
 					return;   // el usuario canceló
 				}
 				try {
-					Grafo grafo = LectorDeArchivos.leer(selector.getSelectedFile());
-					controladorRegiones = new ControladorRegiones(VentanaPrincipal.this, grafo);
+					controladorRegiones = ControladorRegiones.desdeArchivo(VentanaPrincipal.this, selector.getSelectedFile());
 					botonGenerar.setEnabled(true);
 					avisoFaltanDatos.setVisible(false);
-					cantidadDeProvinciasArchivo.setText(String.valueOf(grafo.cantidadProvincias()));
+					cantidadDeProvinciasArchivo.setText(String.valueOf(controladorRegiones.obtenerCantidadProvincias()));
 				} catch (IOException ex) {
 					mostrarError("No se pudo leer el archivo.");
 				} catch (IllegalArgumentException ex) {

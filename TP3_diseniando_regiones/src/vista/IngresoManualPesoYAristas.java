@@ -7,12 +7,9 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import javax.swing.JSplitPane;
@@ -20,9 +17,6 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import controlador.ControladorVecinos;
-import modelo.Grafo;
-import modelo.Provincia;
-import modelo.Vecinos;
 
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
@@ -46,7 +40,6 @@ public class IngresoManualPesoYAristas extends JDialog {
 	private JLabel etiquetaContador;
 	private JButton botonAtras;
 	private JButton botonSiguiente;
-	private Vecinos vecinos;
 	private ControladorVecinos controladorVecinos;
 	private int nroProvincias;
 	private ArrayList<String> nombresProvincias = new ArrayList<>();
@@ -109,10 +102,10 @@ public class IngresoManualPesoYAristas extends JDialog {
 				"", "VECINAS"
 			}
 		) {
-			Class[] columnTypes = new Class[] {
+			Class<?>[] columnTypes = new Class<?>[] {
 				Boolean.class, String.class
 			};
-			public Class getColumnClass(int columnIndex) {
+			public Class<?> getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
 			}
 			public boolean isCellEditable(int row, int column) {
@@ -134,13 +127,13 @@ public class IngresoManualPesoYAristas extends JDialog {
 				"NOMBRE", "PESO"
 			}
 		) {
-			Class[] columnTypes = new Class[] {
+			Class<?>[] columnTypes = new Class<?>[] {
 				String.class, Integer.class
 			};
-			public Class getColumnClass(int columnIndex) {
+			public Class<?> getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
 			}
-			
+			 
 			public boolean isCellEditable(int row, int column) {
 				return column == 1;
 			}
@@ -252,7 +245,7 @@ public class IngresoManualPesoYAristas extends JDialog {
 		        String actual = nombresProvincias.get(posicionActual);
 
 		        if (peso <= 0) {
-		        	tablaDerechaInfo.setValueAt(vecinos.getPeso(actual, vecina), fila, 1);
+		        	tablaDerechaInfo.setValueAt(controladorVecinos.obtenerPeso(actual, vecina), fila, 1);
 		        	return;
 		        }
 		        
@@ -278,7 +271,6 @@ public class IngresoManualPesoYAristas extends JDialog {
 	
 	private void setupVecinos() {
 		controladorVecinos = new ControladorVecinos(nombresProvincias);
-		vecinos = controladorVecinos.obtenerVecinos();
 	}
 	
 	private void cantidadProvincias(int nro) {
@@ -291,7 +283,7 @@ public class IngresoManualPesoYAristas extends JDialog {
 	
 	private void actBotones() {
 		boolean esUltimaPos = (posicionActual == nroProvincias - 1);
-		boolean esConexo = vecinos.esConexo();
+		boolean esConexo = controladorVecinos.esConexo();
 		
 		if (posicionActual == 0) {
 			botonAtras.setText("CANCELAR");
@@ -305,8 +297,8 @@ public class IngresoManualPesoYAristas extends JDialog {
 			botonSiguiente.setText("SIGUIENTE");
 		}
 		
-		botonSiguiente.setEnabled(!esUltimaPos || vecinos.esConexo());
-		avisoGrafoNoConexo.setVisible(esUltimaPos && !vecinos.esConexo());
+		botonSiguiente.setEnabled(!esUltimaPos || esConexo);
+		avisoGrafoNoConexo.setVisible(esUltimaPos && !esConexo);
 		
 	}
 	
@@ -319,7 +311,7 @@ public class IngresoManualPesoYAristas extends JDialog {
 		modelo.setRowCount(0);
 		for (String provincia : nombresProvincias) {
 			if (!provincia.equals(provActual)) {
-				boolean esVecina = vecinos.sonVecinas(provActual, provincia);
+				boolean esVecina = controladorVecinos.sonVecinas(provActual, provincia);
 				modelo.addRow(new Object[] { esVecina, provincia });
 			}
 		}
@@ -332,7 +324,7 @@ public class IngresoManualPesoYAristas extends JDialog {
 		DefaultTableModel modelo = (DefaultTableModel) nombreVecinaYPeso.getModel();
 		modelo.setRowCount(0);
 		bufferParaTabla = true;
-		for (Map.Entry<String, Integer> vecina : vecinos.getVecinas(provActual).entrySet()) {
+		for (Map.Entry<String, Integer> vecina : controladorVecinos.obtenerVecinas(provActual).entrySet()) {
 			modelo.addRow(new Object[] { vecina.getKey(), vecina.getValue() });
 		}
 		bufferParaTabla = false;
@@ -342,7 +334,7 @@ public class IngresoManualPesoYAristas extends JDialog {
 		return finalizado;
 	}
 	
-	public Grafo obtenerGrafo() {
-		return controladorVecinos.obtenerGrafo();
+	public ControladorVecinos obtenerControlador() {
+		return controladorVecinos;
 	}
 }

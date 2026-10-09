@@ -1,12 +1,14 @@
 package controlador;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import modelo.Arista;
 import modelo.CalculadorAGM;
 import modelo.DivisorDeRegiones;
 import modelo.Grafo;
+import modelo.LectorDeArchivos;
 import modelo.Provincia;
 
 public class ControladorRegiones {
@@ -29,4 +31,17 @@ public class ControladorRegiones {
             vista.mostrarError(e.getMessage());
         }
     }
+    
+    public ControladorRegiones(VistaRegiones vista, ControladorVecinos controladorVecinos) {
+    	this(vista, controladorVecinos.obtenerGrafo());
+    }
+
+    public static ControladorRegiones desdeArchivo(VistaRegiones vista, File archivo) throws IOException {
+    	return new ControladorRegiones(vista, LectorDeArchivos.leer(archivo));
+    }
+
+    public int obtenerCantidadProvincias() {
+    	return grafo.cantidadProvincias();
+    }
+    
 }

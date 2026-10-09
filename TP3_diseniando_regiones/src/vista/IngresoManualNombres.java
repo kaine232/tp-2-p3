@@ -8,13 +8,12 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import modelo.Grafo;
+import controlador.ControladorVecinos;
 
 import javax.swing.SwingConstants;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JTextField;
-import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.awt.event.ActionListener;
@@ -36,7 +35,7 @@ public class IngresoManualNombres extends JDialog {
 	private JLabel lblNewLabel_1;
 	private JLabel lblNewLabel;
 	private JLabel lblNewLabel_2;
-	private Grafo grafoSolicitado;
+	private ControladorVecinos controladorVecinos; 
 
 	/**
 	 * Launch the application.
@@ -137,7 +136,7 @@ public class IngresoManualNombres extends JDialog {
 							ventanaIngresoPesoAristas.setVisible(true);
 							
 							if (ventanaIngresoPesoAristas.finalizoConExito()) {
-								grafoSolicitado = ventanaIngresoPesoAristas.obtenerGrafo();
+								controladorVecinos = ventanaIngresoPesoAristas.obtenerControlador();
 							}
 							dispose();
 						}
@@ -228,7 +227,7 @@ public class IngresoManualNombres extends JDialog {
 		lblNewLabel_1.setText((posicionActual + 1) + " / " + totalProvincias);
 	}
 	
-	public Grafo getGrafo() {
-	    return grafoSolicitado;
+	public ControladorVecinos obtenerControlador() {
+	    return controladorVecinos;
 	}
 }
