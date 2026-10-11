@@ -2,9 +2,11 @@ package controlador;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import modelo.Arista;
 import modelo.CalculadorAGM;
 import modelo.DivisorDeRegiones;
 import modelo.Grafo;
@@ -42,6 +44,28 @@ public class ControladorRegiones {
 
     public int obtenerCantidadProvincias() {
     	return grafo.cantidadProvincias();
+    }
+    
+    public List<Object[]> obtenerUniones() {
+    	List<Object[]> uniones = new ArrayList<>();
+    	for (Arista arista : grafo.getAristas()) {
+    		uniones.add(new Object[] {
+    			arista.getProvinciaOrigen().getNombre(),
+    			arista.getProvinciaDestino().getNombre(),
+    			arista.getPeso() });
+    	}
+    	uniones.sort((x, y) -> ((String) x[0]).compareTo((String) y[0]));
+    	return uniones;
+    }
+
+    public void actualizarPeso(String origen, String destino, int peso) {
+    	for (Arista arista : grafo.getAristas()) {
+    		boolean esLaUnion = arista.getProvinciaOrigen().getNombre().equals(origen)
+    				&& arista.getProvinciaDestino().getNombre().equals(destino);
+    		if (esLaUnion) {
+    			arista.setPeso(peso);
+    		}
+    	}
     }
     
 }

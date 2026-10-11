@@ -6,7 +6,6 @@ import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 
 public class MarcadorDeRegiones extends MapMarkerDot {
 
-	private static final long serialVersionUID = 1L;
 	private final Color color;
 
 	public MarcadorDeRegiones(String nombreProvincia, double latitud, double longitud, Color color) {

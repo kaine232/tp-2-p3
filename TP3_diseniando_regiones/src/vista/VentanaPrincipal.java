@@ -46,6 +46,7 @@ public class VentanaPrincipal implements VistaRegiones{
 	private JButton botonManual;
 	private JButton botonArchivo;
 	private JButton botonGenerar;
+	private JButton botonDatos;
 	private JTextField cantidadDeProvinciasArchivo;
 	private JTextField cantidadDeRegionesDeseadas;
 	private JLabel avisoFaltanDatos;
@@ -101,6 +102,7 @@ public class VentanaPrincipal implements VistaRegiones{
 				if (controladorVecinos != null) {
 					controladorRegiones = new ControladorRegiones(VentanaPrincipal.this, controladorVecinos);
 					botonGenerar.setEnabled(true);
+					botonDatos.setEnabled(true);
 					avisoFaltanDatos.setVisible(false);
 					ingresoDeDatosDesdeArchivo = false;
 					cantidadDeProvinciasArchivo.setText("");
@@ -120,11 +122,12 @@ public class VentanaPrincipal implements VistaRegiones{
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser selector = new JFileChooser();
 				if (selector.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION) {
-					return;   // el usuario canceló
+					return;   
 				}
 				try {
 					controladorRegiones = ControladorRegiones.desdeArchivo(VentanaPrincipal.this, selector.getSelectedFile());
 					botonGenerar.setEnabled(true);
+					botonDatos.setEnabled(true);
 					avisoFaltanDatos.setVisible(false);
 					ingresoDeDatosDesdeArchivo = true;
 					cantidadDeProvinciasArchivo.setText(String.valueOf(controladorRegiones.obtenerCantidadProvincias()));
@@ -158,6 +161,16 @@ public class VentanaPrincipal implements VistaRegiones{
 		botonGenerar.setFont(new Font("Trebuchet MS", Font.BOLD, 20));
 		botonGenerar.setBounds(150, 300, 200, 100);
 		frame.getContentPane().add(botonGenerar);
+		
+		botonDatos = new JButton("VER / EDITAR DATOS");
+		botonDatos.setEnabled(false);
+		botonDatos.setBounds(150, 215, 200, 25);   
+		botonDatos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new VentanaDatos(frame, controladorRegiones).setVisible(true);
+			}
+		});
+		frame.getContentPane().add(botonDatos);
 		
 		cantidadDeProvinciasManual = new JTextField();
 		cantidadDeProvinciasManual.addKeyListener(new KeyAdapter() {
