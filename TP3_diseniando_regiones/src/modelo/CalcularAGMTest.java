@@ -4,9 +4,9 @@ import static org.junit.Assert.*;
 public class CalcularAGMTest {
 	private Grafo grafoTriangulo() {
 		Grafo g = new Grafo();
-		Provincia a = new Provincia("Buenos Aires");
-		Provincia b = new Provincia("Cordoba");
-		Provincia c = new Provincia("Santa Fe");
+		Provincia a = new Provincia("Buenos Aires", 0.0, 0.0);
+		Provincia b = new Provincia("Cordoba", 0.0, 0.0);
+		Provincia c = new Provincia("Santa Fe", 0.0, 0.0);
 		
 		g.agregarArista(a, b, 1);
 		g.agregarArista(b, c, 2);

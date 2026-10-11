@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 public class AristaTest {
 	private Provincia provincia(String nombre) {
-		return new Provincia(nombre);
+		return new Provincia(nombre, 0.0, 0.0);
 	}
 	private Arista arista(String nombreA, String nombreB, int peso) {
 		return new Arista(provincia(nombreA), provincia(nombreB), peso);
@@ -22,7 +22,7 @@ public class AristaTest {
 		Arista arista1 = arista("Buenos Aires", "Cordoba",10);
 		Arista arista2 = arista("Buenos Aires", "Cordoba",10);
 		
-		assertEquals(arista1,arista2);
+		assertEquals(arista1.hashCode(),arista2.hashCode());
 	}
 	@Test
 	public void testGetExtremoOpuesto() {

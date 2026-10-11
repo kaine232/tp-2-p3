@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 public class GrafoTest {
 	//metodos auxiliares
 	private Provincia provincia(String nombre) {
-		return new Provincia(nombre);
+		return new Provincia(nombre, 0.0, 0.0);
 	}
 	private Grafo grafoConArista(String nombreA, String nombreB, int peso) {
 		Grafo g = new Grafo();

@@ -5,16 +5,28 @@ import java.util.Objects;
 public class Provincia {
 
 	public final String nombre;
+	private final double latitud;
+	private final double longitud;
 	
-	public Provincia (String nombre){
+	public Provincia (String nombre, double latitud, double longitud){
 		if (nombre==null) {
 			throw new IllegalArgumentException ("El nombre de provincia no puede ser vacío.");
 		}
 		this.nombre = nombre;
+		this.latitud = latitud;
+		this.longitud = longitud;
 	}
 	
 	public String getNombre() {
 		return this.nombre;
+	}
+	
+	public double getLatitud() {
+		return this.latitud;
+	}
+	
+	public double getLongitud() {
+		return this.longitud;
 	}
 	
     @Override

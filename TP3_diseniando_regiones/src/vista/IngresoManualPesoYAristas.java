@@ -17,6 +17,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import controlador.ControladorVecinos;
+import modelo.Coordenada;
 
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
@@ -43,6 +44,7 @@ public class IngresoManualPesoYAristas extends JDialog {
 	private ControladorVecinos controladorVecinos;
 	private int nroProvincias;
 	private ArrayList<String> nombresProvincias = new ArrayList<>();
+	private Map<String, Coordenada> coordenadas;
 	private int posicionActual;
 	private boolean bufferParaTabla;
 	private boolean finalizado;
@@ -255,9 +257,10 @@ public class IngresoManualPesoYAristas extends JDialog {
 		});
 	}
 	
-	public void setupVentana(ArrayList<String> nombres, int datoCantProvincias) {
+	public void setupVentana(ArrayList<String> nombres, int datoCantProvincias, Map<String, Coordenada> coordenadas) {
 		cantidadProvincias(datoCantProvincias);
 		setupListaNombres(nombres);
+		this.coordenadas = coordenadas;
 		setupVecinos();
 		actContador();
 		actBotones();
@@ -270,7 +273,7 @@ public class IngresoManualPesoYAristas extends JDialog {
 	}
 	
 	private void setupVecinos() {
-		controladorVecinos = new ControladorVecinos(nombresProvincias);
+		controladorVecinos = new ControladorVecinos(nombresProvincias, coordenadas);
 	}
 	
 	private void cantidadProvincias(int nro) {

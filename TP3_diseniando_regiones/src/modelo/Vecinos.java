@@ -8,9 +8,11 @@ public class Vecinos {
 
 	private final List<String> nombres;
 	private final Map<String, Map<String, Integer>> vecinos = new HashMap<>();
+	private final Map<String, Coordenada> coordenadas;
 	
-	public Vecinos(List<String> nombres) {
+	public Vecinos(List<String> nombres, Map<String, Coordenada> coordenadas) {
 		this.nombres = nombres;
+		this.coordenadas = coordenadas;
 		for (String nombre : nombres) {
 			vecinos.put(nombre, new HashMap<>());
 		}
@@ -45,13 +47,21 @@ public class Vecinos {
 	public Grafo armarGrafo() {
 		Grafo grafo = new Grafo();
 		for (String nombre : nombres) {
-			grafo.agregarProvincia(new Provincia(nombre));
+			grafo.agregarProvincia(crearProvincia(nombre));
 		}
 		for (String a : nombres) {
 			for (String b : vecinos.get(a).keySet()) {
-				grafo.agregarArista(new Provincia(a), new Provincia(b), vecinos.get(a).get(b));
+				grafo.agregarArista(crearProvincia(a), crearProvincia(b), vecinos.get(a).get(b));
 			}
 		}
 		return grafo;
+	}
+	
+	private Provincia crearProvincia(String nombre) {
+		Coordenada coordenada = coordenadas.get(nombre);
+		if (coordenada == null) {
+			throw new IllegalArgumentException("Falta la coordenada de la provincia: " + nombre);
+		}
+		return new Provincia(nombre, coordenada.getLatitud(), coordenada.getLongitud());
 	}
 }

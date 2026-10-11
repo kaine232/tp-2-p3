@@ -7,9 +7,9 @@ import java.util.Set;
 public class DivisorDeRegionesTest {
 	private Grafo grafoLinea() {
 		Grafo g = new Grafo();
-		Provincia p1 = new Provincia("Buenos Aires");
-		Provincia p2 = new Provincia("Cordoba");
-		Provincia p3 = new Provincia("Santa Fe");
+		Provincia p1 = new Provincia("Buenos Aires", 0.0, 0.0);
+		Provincia p2 = new Provincia("Cordoba", 0.0, 0.0);
+		Provincia p3 = new Provincia("Santa Fe", 0.0, 0.0);
 		
 		g.agregarArista(p1, p2, 1);
 		g.agregarArista(p2, p3, 10);

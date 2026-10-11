@@ -19,8 +19,10 @@ import modelo.*;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import java.awt.BorderLayout;
 import java.awt.Font;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -29,6 +31,11 @@ import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
 public class VentanaPrincipal implements VistaRegiones{
 
@@ -198,6 +205,12 @@ public class VentanaPrincipal implements VistaRegiones{
 		frame.getContentPane().add(etiquetaRegiones);
 	} 
 
+	// Un color por región; si hay más regiones que colores, se repiten
+    private static final Color[] PALETA_DE_COLORES = {
+            Color.RED, Color.BLUE, new Color(0, 140, 0), Color.ORANGE,
+            Color.MAGENTA, new Color(0, 170, 170), new Color(180, 150, 0), Color.PINK
+    };
+	
 	@Override
 	public void mostrarRegiones(List<Set<Provincia>> regiones) {
 		String texto = "";
@@ -207,10 +220,34 @@ public class VentanaPrincipal implements VistaRegiones{
 		
 		JTextArea area = new JTextArea(texto);
 		area.setEditable(false);
-		JScrollPane scroll = new JScrollPane(area);
-		scroll.setPreferredSize(new Dimension(350, 200));
+		JScrollPane scrollTexto = new JScrollPane(area);
+		scrollTexto.setPreferredSize(new Dimension(220, 420));
 		
-		JOptionPane.showMessageDialog(frame, scroll, "Regiones", JOptionPane.INFORMATION_MESSAGE);
+		Coordinate coordenadaArg = new Coordinate(-34,-58);
+		JMapViewer mapa = new JMapViewer();
+        mapa.setPreferredSize(new Dimension(420, 420));
+        mapa.setDisplayPosition(coordenadaArg, 3);
+        List<MapMarker> marcadores = new ArrayList<>();
+        for (int i = 0; i < regiones.size(); i++) {
+                Color colorDeLaRegion = PALETA_DE_COLORES[i % PALETA_DE_COLORES.length];
+                for (Provincia provincia : regiones.get(i)) {
+                        marcadores.add(new MarcadorDeRegiones(
+                                provincia.getNombre(),
+                                provincia.getLatitud(),
+                                provincia.getLongitud(),
+                                colorDeLaRegion
+                        ));
+                }
+        }
+        
+        mapa.setMapMarkerList(marcadores);
+        mapa.setDisplayToFitMapMarkers();
+        JPanel panelCompleto = new JPanel(new BorderLayout());
+        panelCompleto.add(scrollTexto, BorderLayout.EAST);
+        panelCompleto.add(mapa, BorderLayout.CENTER);
+
+		
+		JOptionPane.showMessageDialog(frame, panelCompleto, "Regiones", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	@Override

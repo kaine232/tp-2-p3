@@ -15,12 +15,16 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JTextField;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
+import modelo.Coordenada;
 
 public class IngresoManualNombres extends JDialog {
 
@@ -29,6 +33,8 @@ public class IngresoManualNombres extends JDialog {
 	private JTextField campoDeIngresoNombres;
 	private int totalProvincias;
 	private ArrayList<String> nombresProvincias = new ArrayList<>();
+	private ArrayList<String> latitudesProvincias = new ArrayList<>();
+	private ArrayList<String> longitudesProvincias = new ArrayList<>();
 	private int posicionActual;
 	private JButton botonAtras;
 	private JButton botonSiguiente;
@@ -130,9 +136,10 @@ public class IngresoManualNombres extends JDialog {
 				botonSiguiente = new JButton("SIGUIENTE");
 				botonSiguiente.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						if (posicionActual == totalProvincias - 1 && todosLosDatosCompletados()) {
+						if (posicionActual == totalProvincias - 1 && todosLosDatosCompletados() && coordenadasSonNumericas()) {
+							Map<String, Coordenada> coordenadas = armarMapaDeCoordenadas();
 							IngresoManualPesoYAristas ventanaIngresoPesoAristas = new IngresoManualPesoYAristas();
-							ventanaIngresoPesoAristas.setupVentana(nombresProvincias, totalProvincias);
+							ventanaIngresoPesoAristas.setupVentana(nombresProvincias, totalProvincias, coordenadas);
 							ventanaIngresoPesoAristas.setVisible(true);
 							
 							if (ventanaIngresoPesoAristas.finalizoConExito()) {
@@ -165,6 +172,18 @@ public class IngresoManualNombres extends JDialog {
 	private void datoCantidadDeProvincias(int pro) {
 		this.totalProvincias = pro;
 	}
+	
+	private boolean coordenadasSonNumericas() {
+		for (int pos = 0; pos < totalProvincias; pos++) {
+			try {
+				Double.parseDouble(latitudesProvincias.get(pos));
+				Double.parseDouble(longitudesProvincias.get(pos));
+			} catch (NumberFormatException e) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	private boolean todosLosDatosCompletados() {
 		for (String nombre : nombresProvincias) {
@@ -173,6 +192,16 @@ public class IngresoManualNombres extends JDialog {
 			}
 		}
 		return true;
+	}
+	
+	private Map<String, Coordenada> armarMapaDeCoordenadas() {
+		Map<String, Coordenada> coordenadas = new HashMap<>();
+		for (int pos = 0; pos < totalProvincias; pos++) {
+			double latitud = Double.parseDouble(latitudesProvincias.get(pos));
+			double longitud = Double.parseDouble(longitudesProvincias.get(pos));
+			coordenadas.put(nombresProvincias.get(pos), new Coordenada(latitud, longitud));
+		}
+		return coordenadas;
 	}
 	
 	private boolean hayNombresRepetidos() {
@@ -194,12 +223,16 @@ public class IngresoManualNombres extends JDialog {
 	private void actPosibleFinalizar() {
 	    boolean datosLlenos = todosLosDatosCompletados();
 	    boolean repetidos = hayNombresRepetidos();
+	    boolean numericosValidos = coordenadasSonNumericas();
 	    boolean esLaUltimaPos = (posicionActual == totalProvincias - 1);
 
-	    botonSiguiente.setEnabled(!esLaUltimaPos || (datosLlenos && !repetidos));
+	    botonSiguiente.setEnabled(!esLaUltimaPos || (datosLlenos && numericosValidos && !repetidos));
 
 	    if (esLaUltimaPos && !datosLlenos) {
 	        lblNewLabel_2.setText("¡FALTAN NOMBRES!");
+	        lblNewLabel_2.setVisible(true);
+	    } else if (esLaUltimaPos && datosLlenos && !numericosValidos) {
+	        lblNewLabel_2.setText("¡LATITUD/LONGITUD INVÁLIDA!");
 	        lblNewLabel_2.setVisible(true);
 	    } else if (esLaUltimaPos && repetidos) {
 	        lblNewLabel_2.setText("¡HAY NOMBRES REPETIDOS!");

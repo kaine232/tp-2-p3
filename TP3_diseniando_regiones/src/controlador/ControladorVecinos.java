@@ -3,6 +3,7 @@ package controlador;
 import java.util.List;
 import java.util.Map;
 
+import modelo.Coordenada;
 import modelo.Grafo;
 import modelo.Vecinos;
 
@@ -10,8 +11,8 @@ public class ControladorVecinos {
 
 	private final Vecinos vecinos;
 
-	public ControladorVecinos(List<String> nombres) {
-		this.vecinos = new Vecinos(nombres);
+	public ControladorVecinos(List<String> nombres, Map<String, Coordenada> coordenadas) {
+		this.vecinos = new Vecinos(nombres, coordenadas);
 	}
 
 	public void unir(String a, String b, int peso) {

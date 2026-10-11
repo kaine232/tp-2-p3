@@ -5,10 +5,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LectorDeArchivos {
 
 	public static Grafo leer(File archivo) throws IOException {
+		Map<String, Coordenada> coordenadas = new HashMap<>();
 		Grafo grafo = new Grafo();
 
 		try (BufferedReader lector = Files.newBufferedReader(archivo.toPath(), StandardCharsets.UTF_8)) {
@@ -17,8 +20,13 @@ public class LectorDeArchivos {
 			while ((linea = lector.readLine()) != null) {
 				numeroLinea++;
 				linea = linea.replace("\uFEFF", "").trim();
-				if (!linea.isEmpty()) {
-					agregarLinea(grafo, linea, numeroLinea);
+				if (linea.isEmpty()) {
+					continue;
+				}
+				if (linea.startsWith("COORD,")) {
+					agregarCoordenada(coordenadas, linea, numeroLinea);
+				} else {
+					agregarLinea(grafo, coordenadas, linea, numeroLinea);
 				}
 			}
 		}
@@ -33,7 +41,7 @@ public class LectorDeArchivos {
 		return grafo;
 	}
 
-	private static void agregarLinea(Grafo grafo, String linea, int numeroLinea) {
+	private static void agregarLinea(Grafo grafo, Map<String, Coordenada> coordenadas, String linea, int numeroLinea) {
 		String[] partes = linea.split(",");
 		if (partes.length != 3) {
 			throw new IllegalArgumentException("Línea " + numeroLinea + " inválida. El formato es: provincia1,provincia2,peso");
@@ -58,6 +66,35 @@ public class LectorDeArchivos {
 			throw new IllegalArgumentException("Línea " + numeroLinea + ": el peso debe ser mayor a 0.");
 		}
 
-		grafo.agregarArista(new Provincia(a), new Provincia(b), peso);
+		grafo.agregarArista(crearProvincia(a, coordenadas, numeroLinea),crearProvincia(b, coordenadas, numeroLinea),peso);
+	}
+	
+	private static Provincia crearProvincia(String nombre, Map<String, Coordenada> coordenadas, int numeroLinea) {
+		Coordenada coordenada = coordenadas.get(nombre);
+		if (coordenada == null) {
+			throw new IllegalArgumentException(
+				"Línea " + numeroLinea + ": falta la línea COORD de \"" + nombre + "\" (tiene que aparecer antes que sus aristas en el archivo)."
+			);
+		}
+		return new Provincia(nombre, coordenada.getLatitud(), coordenada.getLongitud());
+	}
+	
+	private static void agregarCoordenada(Map<String, Coordenada> coordenadas, String linea, int numeroLinea) {
+		String[] partes = linea.split(",");
+		if (partes.length != 4) {
+			throw new IllegalArgumentException("Línea " + numeroLinea + " inválida. El formato es: COORD,provincia,latitud,longitud");
+		}
+
+		String nombre = partes[1].trim();
+		double latitud;
+		double longitud;
+		try {
+			latitud = Double.parseDouble(partes[2].trim());
+			longitud = Double.parseDouble(partes[3].trim());
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("Línea " + numeroLinea + ": la latitud y la longitud deben ser números.");
+		}
+
+		coordenadas.put(nombre, new Coordenada(latitud, longitud));
 	}
 }

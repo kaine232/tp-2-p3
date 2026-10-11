@@ -6,14 +6,14 @@ public class ProvinciaTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testNombreNoPuedeSerNull() {
-		new Provincia(null);
+		new Provincia(null, 0.0, 0.0);
 	}
 	
 	@Test
 	public void testEqualsHashcode() {
-		Provincia p1 = new Provincia("Buenos Aires");
-		Provincia p2 = new Provincia("Buenos Aires");
-		Provincia p3 = new Provincia("Cordoba");
+		Provincia p1 = new Provincia("Buenos Aires", 0.0, 0.0);
+		Provincia p2 = new Provincia("Buenos Aires", 0.0, 0.0);
+		Provincia p3 = new Provincia("Cordoba", 0.0, 0.0);
 		
 		assertEquals(p1,p2);
 		assertNotEquals(p1,p3);
