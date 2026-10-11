@@ -49,6 +49,7 @@ public class VentanaPrincipal implements VistaRegiones{
 	private JTextField cantidadDeProvinciasArchivo;
 	private JTextField cantidadDeRegionesDeseadas;
 	private JLabel avisoFaltanDatos;
+	private boolean ingresoDeDatosDesdeArchivo;
 
 	/**
 	 * Launch the application.
@@ -101,6 +102,7 @@ public class VentanaPrincipal implements VistaRegiones{
 					controladorRegiones = new ControladorRegiones(VentanaPrincipal.this, controladorVecinos);
 					botonGenerar.setEnabled(true);
 					avisoFaltanDatos.setVisible(false);
+					ingresoDeDatosDesdeArchivo = false;
 					cantidadDeProvinciasArchivo.setText("");
 				}
 				
@@ -124,6 +126,7 @@ public class VentanaPrincipal implements VistaRegiones{
 					controladorRegiones = ControladorRegiones.desdeArchivo(VentanaPrincipal.this, selector.getSelectedFile());
 					botonGenerar.setEnabled(true);
 					avisoFaltanDatos.setVisible(false);
+					ingresoDeDatosDesdeArchivo = true;
 					cantidadDeProvinciasArchivo.setText(String.valueOf(controladorRegiones.obtenerCantidadProvincias()));
 				} catch (IOException ex) {
 					mostrarError("No se pudo leer el archivo.");
@@ -222,6 +225,11 @@ public class VentanaPrincipal implements VistaRegiones{
 		area.setEditable(false);
 		JScrollPane scrollTexto = new JScrollPane(area);
 		scrollTexto.setPreferredSize(new Dimension(220, 420));
+		
+		if(!ingresoDeDatosDesdeArchivo) {
+			JOptionPane.showMessageDialog(frame,  scrollTexto, "Regiones", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
 		
 		Coordinate coordenadaArg = new Coordinate(-34,-58);
 		JMapViewer mapa = new JMapViewer();
