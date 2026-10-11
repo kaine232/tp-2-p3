@@ -31,6 +31,8 @@ public class IngresoManualNombres extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField campoDeIngresoNombres;
+    private JTextField campoLatitud;
+    private JTextField campoLongitud;
 	private int totalProvincias;
 	private ArrayList<String> nombresProvincias = new ArrayList<>();
 	private ArrayList<String> latitudesProvincias = new ArrayList<>();
@@ -90,6 +92,46 @@ public class IngresoManualNombres extends JDialog {
 			campoDeIngresoNombres.setColumns(10);
 		}
 		
+		{
+            
+            JLabel lblLatitud = new JLabel("LATITUD");
+            lblLatitud.setHorizontalAlignment(SwingConstants.CENTER);
+            lblLatitud.setFont(new Font("Tahoma", Font.PLAIN, 11));
+            lblLatitud.setBounds(97, 95, 100, 14);
+            contentPanel.add(lblLatitud);
+            campoLatitud = new JTextField();
+            campoLatitud.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyReleased(KeyEvent e) {
+                            latitudesProvincias.set(posicionActual, campoLatitud.getText().trim());
+                            actPosibleFinalizar();
+                    }
+            });
+            campoLatitud.setBounds(97, 111, 100, 24);
+            campoLatitud.setHorizontalAlignment(SwingConstants.CENTER);
+            contentPanel.add(campoLatitud);
+            campoLatitud.setColumns(10);
+    }
+    
+    {
+            JLabel lblLongitud = new JLabel("LONGITUD");
+            lblLongitud.setHorizontalAlignment(SwingConstants.CENTER);
+            lblLongitud.setFont(new Font("Tahoma", Font.PLAIN, 11));
+            lblLongitud.setBounds(237, 95, 100, 14);
+            contentPanel.add(lblLongitud);
+            campoLongitud = new JTextField();
+            campoLongitud.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyReleased(KeyEvent e) {
+                            longitudesProvincias.set(posicionActual, campoLongitud.getText().trim());
+                            actPosibleFinalizar();
+                    }
+            });
+            campoLongitud.setBounds(237, 111, 100, 24);
+            campoLongitud.setHorizontalAlignment(SwingConstants.CENTER);
+            contentPanel.add(campoLongitud);
+            campoLongitud.setColumns(10);
+    }
 		
 		{
 			lblNewLabel_1 = new JLabel((posicionActual + 1) + " / " + totalProvincias);
@@ -101,9 +143,10 @@ public class IngresoManualNombres extends JDialog {
 		{
 			lblNewLabel_2 = new JLabel("¡FALTAN NOMBRES!");
 			lblNewLabel_2.setVisible(false);
+			lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
 			lblNewLabel_2.setForeground(new Color(255, 0, 0));
 			lblNewLabel_2.setFont(new Font("Trebuchet MS", Font.PLAIN, 10));
-			lblNewLabel_2.setBounds(219, 134, 180, 14);
+			lblNewLabel_2.setBounds(185, 184, 180, 14);
 			contentPanel.add(lblNewLabel_2);
 		}
 		{
@@ -125,6 +168,8 @@ public class IngresoManualNombres extends JDialog {
 							botonSiguiente.setEnabled(true);
 							lblNewLabel_2.setVisible(false);
 							campoDeIngresoNombres.setText(nombresProvincias.get(posicionActual));
+							campoLatitud.setText(latitudesProvincias.get(posicionActual));
+                            campoLongitud.setText(longitudesProvincias.get(posicionActual));
 						}
 					}
 				});
@@ -186,10 +231,10 @@ public class IngresoManualNombres extends JDialog {
 	}
 
 	private boolean todosLosDatosCompletados() {
-		for (String nombre : nombresProvincias) {
-			if (nombre.trim().isEmpty()) {
-				return false;
-			}
+		for (int pos = 0; pos < totalProvincias; pos++) {
+               if (nombresProvincias.get(pos).trim().isEmpty() || latitudesProvincias.get(pos).trim().isEmpty() || longitudesProvincias.get(pos).trim().isEmpty()) {
+                       return false;
+                }
 		}
 		return true;
 	}
@@ -217,6 +262,8 @@ public class IngresoManualNombres extends JDialog {
 	private void iniciarArregloNombres() {
 		for (int pos = 0; pos < totalProvincias; pos++) {
 			nombresProvincias.add("");
+            latitudesProvincias.add("");
+            longitudesProvincias.add("");
 		}
 	}
 	
