@@ -257,7 +257,7 @@ public class IngresoManualPesoYAristas extends JDialog {
 		});
 	}
 	
-	public void setupVentana(ArrayList<String> nombres, int datoCantProvincias, Map<String, Coordenada> coordenadas) {
+	public void setupVentana(ArrayList<String> nombres, int datoCantProvincias, Map<String, Coordenada> coordenadas2) {
 		cantidadProvincias(datoCantProvincias);
 		setupListaNombres(nombres);
 		this.coordenadas = coordenadas;

@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import controlador.ControladorVecinos;
+import modelo.Coordenada;
 
 import javax.swing.SwingConstants;
 import javax.swing.JLabel;
@@ -24,19 +25,13 @@ import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import modelo.Coordenada;
-
 public class IngresoManualNombres extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField campoDeIngresoNombres;
-    private JTextField campoLatitud;
-    private JTextField campoLongitud;
 	private int totalProvincias;
 	private ArrayList<String> nombresProvincias = new ArrayList<>();
-	private ArrayList<String> latitudesProvincias = new ArrayList<>();
-	private ArrayList<String> longitudesProvincias = new ArrayList<>();
 	private int posicionActual;
 	private JButton botonAtras;
 	private JButton botonSiguiente;
@@ -92,46 +87,6 @@ public class IngresoManualNombres extends JDialog {
 			campoDeIngresoNombres.setColumns(10);
 		}
 		
-		{
-            
-            JLabel lblLatitud = new JLabel("LATITUD");
-            lblLatitud.setHorizontalAlignment(SwingConstants.CENTER);
-            lblLatitud.setFont(new Font("Tahoma", Font.PLAIN, 11));
-            lblLatitud.setBounds(97, 95, 100, 14);
-            contentPanel.add(lblLatitud);
-            campoLatitud = new JTextField();
-            campoLatitud.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyReleased(KeyEvent e) {
-                            latitudesProvincias.set(posicionActual, campoLatitud.getText().trim());
-                            actPosibleFinalizar();
-                    }
-            });
-            campoLatitud.setBounds(97, 111, 100, 24);
-            campoLatitud.setHorizontalAlignment(SwingConstants.CENTER);
-            contentPanel.add(campoLatitud);
-            campoLatitud.setColumns(10);
-    }
-    
-    {
-            JLabel lblLongitud = new JLabel("LONGITUD");
-            lblLongitud.setHorizontalAlignment(SwingConstants.CENTER);
-            lblLongitud.setFont(new Font("Tahoma", Font.PLAIN, 11));
-            lblLongitud.setBounds(237, 95, 100, 14);
-            contentPanel.add(lblLongitud);
-            campoLongitud = new JTextField();
-            campoLongitud.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyReleased(KeyEvent e) {
-                            longitudesProvincias.set(posicionActual, campoLongitud.getText().trim());
-                            actPosibleFinalizar();
-                    }
-            });
-            campoLongitud.setBounds(237, 111, 100, 24);
-            campoLongitud.setHorizontalAlignment(SwingConstants.CENTER);
-            contentPanel.add(campoLongitud);
-            campoLongitud.setColumns(10);
-    }
 		
 		{
 			lblNewLabel_1 = new JLabel((posicionActual + 1) + " / " + totalProvincias);
@@ -143,10 +98,9 @@ public class IngresoManualNombres extends JDialog {
 		{
 			lblNewLabel_2 = new JLabel("¡FALTAN NOMBRES!");
 			lblNewLabel_2.setVisible(false);
-			lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
 			lblNewLabel_2.setForeground(new Color(255, 0, 0));
 			lblNewLabel_2.setFont(new Font("Trebuchet MS", Font.PLAIN, 10));
-			lblNewLabel_2.setBounds(185, 184, 180, 14);
+			lblNewLabel_2.setBounds(219, 134, 180, 14);
 			contentPanel.add(lblNewLabel_2);
 		}
 		{
@@ -168,8 +122,6 @@ public class IngresoManualNombres extends JDialog {
 							botonSiguiente.setEnabled(true);
 							lblNewLabel_2.setVisible(false);
 							campoDeIngresoNombres.setText(nombresProvincias.get(posicionActual));
-							campoLatitud.setText(latitudesProvincias.get(posicionActual));
-                            campoLongitud.setText(longitudesProvincias.get(posicionActual));
 						}
 					}
 				});
@@ -181,10 +133,10 @@ public class IngresoManualNombres extends JDialog {
 				botonSiguiente = new JButton("SIGUIENTE");
 				botonSiguiente.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						if (posicionActual == totalProvincias - 1 && todosLosDatosCompletados() && coordenadasSonNumericas()) {
-							Map<String, Coordenada> coordenadas = armarMapaDeCoordenadas();
+						
+						if (posicionActual == totalProvincias - 1 && todosLosDatosCompletados()) {
 							IngresoManualPesoYAristas ventanaIngresoPesoAristas = new IngresoManualPesoYAristas();
-							ventanaIngresoPesoAristas.setupVentana(nombresProvincias, totalProvincias, coordenadas);
+							ventanaIngresoPesoAristas.setupVentana(nombresProvincias, totalProvincias, coordenadasDummy(nombresProvincias, totalProvincias));
 							ventanaIngresoPesoAristas.setVisible(true);
 							
 							if (ventanaIngresoPesoAristas.finalizoConExito()) {
@@ -218,35 +170,24 @@ public class IngresoManualNombres extends JDialog {
 		this.totalProvincias = pro;
 	}
 	
-	private boolean coordenadasSonNumericas() {
-		for (int pos = 0; pos < totalProvincias; pos++) {
-			try {
-				Double.parseDouble(latitudesProvincias.get(pos));
-				Double.parseDouble(longitudesProvincias.get(pos));
-			} catch (NumberFormatException e) {
+	public Map<String, Coordenada> coordenadasDummy(ArrayList<String> nombresProvincias, int totalProvincias){
+		Map<String, Coordenada> coordenadas = new HashMap<>();
+		for(int i=0; i<totalProvincias; i++) {
+			Coordenada coordenada = new Coordenada(0.0,0.0);
+			coordenadas.put(nombresProvincias.get(i), coordenada);
+		}
+		
+		return coordenadas;
+		
+	}
+
+	private boolean todosLosDatosCompletados() {
+		for (String nombre : nombresProvincias) {
+			if (nombre.trim().isEmpty()) {
 				return false;
 			}
 		}
 		return true;
-	}
-
-	private boolean todosLosDatosCompletados() {
-		for (int pos = 0; pos < totalProvincias; pos++) {
-               if (nombresProvincias.get(pos).trim().isEmpty() || latitudesProvincias.get(pos).trim().isEmpty() || longitudesProvincias.get(pos).trim().isEmpty()) {
-                       return false;
-                }
-		}
-		return true;
-	}
-	
-	private Map<String, Coordenada> armarMapaDeCoordenadas() {
-		Map<String, Coordenada> coordenadas = new HashMap<>();
-		for (int pos = 0; pos < totalProvincias; pos++) {
-			double latitud = Double.parseDouble(latitudesProvincias.get(pos));
-			double longitud = Double.parseDouble(longitudesProvincias.get(pos));
-			coordenadas.put(nombresProvincias.get(pos), new Coordenada(latitud, longitud));
-		}
-		return coordenadas;
 	}
 	
 	private boolean hayNombresRepetidos() {
@@ -262,24 +203,18 @@ public class IngresoManualNombres extends JDialog {
 	private void iniciarArregloNombres() {
 		for (int pos = 0; pos < totalProvincias; pos++) {
 			nombresProvincias.add("");
-            latitudesProvincias.add("");
-            longitudesProvincias.add("");
 		}
 	}
 	
 	private void actPosibleFinalizar() {
 	    boolean datosLlenos = todosLosDatosCompletados();
 	    boolean repetidos = hayNombresRepetidos();
-	    boolean numericosValidos = coordenadasSonNumericas();
 	    boolean esLaUltimaPos = (posicionActual == totalProvincias - 1);
 
-	    botonSiguiente.setEnabled(!esLaUltimaPos || (datosLlenos && numericosValidos && !repetidos));
+	    botonSiguiente.setEnabled(!esLaUltimaPos || (datosLlenos && !repetidos));
 
 	    if (esLaUltimaPos && !datosLlenos) {
 	        lblNewLabel_2.setText("¡FALTAN NOMBRES!");
-	        lblNewLabel_2.setVisible(true);
-	    } else if (esLaUltimaPos && datosLlenos && !numericosValidos) {
-	        lblNewLabel_2.setText("¡LATITUD/LONGITUD INVÁLIDA!");
 	        lblNewLabel_2.setVisible(true);
 	    } else if (esLaUltimaPos && repetidos) {
 	        lblNewLabel_2.setText("¡HAY NOMBRES REPETIDOS!");
